@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "index",
+            "script": "./dist/index.js",
+            "watch": true
+        }
+    ]
+}
