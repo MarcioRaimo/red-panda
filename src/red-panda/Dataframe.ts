@@ -1,30 +1,30 @@
-import Serie from './Serie'
+import Column from './Column'
 
 export default class Dataframe {
-    private columns: Array<string> = []
+    private columnsNames: Array<string> = []
     private id: string = "id"
     private data: any = {}
 
     constructor(obj?: DataframeParams) {
         // this.columns.push(this.id)
         if (obj) {
-            if (obj.columns && obj.data) {
-                if (obj.columns.length !== obj.data.length) {
-                    throw new Error(`Length of columns(${obj.columns.length}) and data(${obj.data.length}) must be the same`)
+            if (obj.columnsNames && obj.data) {
+                if (obj.columnsNames.length !== obj.data.length) {
+                    throw new Error(`Length of columns(${obj.columnsNames.length}) and data(${obj.data.length}) must be the same`)
                 }
-                for (let index = 0; index < obj.columns.length; index++) {
-                    const column = obj.columns[index]
+                for (let index = 0; index < obj.columnsNames.length; index++) {
+                    const column = obj.columnsNames[index]
                     const serie = obj.data[index]
-                    this.columns.push(column)
-                    this.data[column] = new Serie({ data: serie, id: column })
+                    this.columnsNames.push(column)
+                    this.data[column] = new Column({ data: serie, id: column })
                 }
             } else {
-                if (obj.columns) {
-                    this.columns = obj.columns
+                if (obj.columnsNames) {
+                    this.columnsNames = obj.columnsNames
                 }
                 if (obj.data) {
                     for (let index = 0; index < obj.data.length; index++) {
-                        this.data[`column${index}`] = new Serie({ id: `column${index}`, data: obj.data[index] })
+                        this.data[`column${index}`] = new Column({ id: `column${index}`, data: obj.data[index] })
                     }
                 }
             }
@@ -35,23 +35,23 @@ export default class Dataframe {
         }
     }
 
-    getColumns(): Array<string> {
-        return this.columns
+    getColumnsNames(): Array<string> {
+        return this.columnsNames
     }
 
-    getSerie(index: number): Serie
+    getColumn(index: number): Column
 
-    getSerie(name: string): Serie
+    getColumn(name: string): Column
 
-    getSerie(index: any): Serie {
+    getColumn(index: any): Column {
         if (typeof index === 'number') {
-            if (index < this.columns.length) {
-                let temp = this.columns[index]
+            if (index < this.columnsNames.length) {
+                let temp = this.columnsNames[index]
                 return this.data[temp]
             }
         }
         if (typeof index === 'string') {
-            for (let i of this.columns) {
+            for (let i of this.columnsNames) {
                 if (i == index) {
                     return this.data[i]
                 }
@@ -61,12 +61,12 @@ export default class Dataframe {
     }
 
     size(): Array<Number> {
-        return [this.columns.length, Object.keys(this.data).length]
+        return [this.columnsNames.length, Object.keys(this.data).length]
     }
 
     head(): any {
         let temp: any = {}
-        for (let index of this.columns) {
+        for (let index of this.columnsNames) {
             temp[index] = this.data[index].head()
         }
         return temp
@@ -78,7 +78,7 @@ export default class Dataframe {
 }
 
 type DataframeParams = {
-    columns?: Array<string>
+    columnsNames?: Array<string>
     id?: string
     data?: Array<Array<any>>
 }

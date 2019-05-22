@@ -1,10 +1,10 @@
 import Dataframe from "./Dataframe"
-import Serie from "./Serie"
+import Column from "./Column"
 import readCsv from './ReadCsv'
 
 export default Dataframe
 
 export {
-    Serie,
+    Column,
     readCsv
 }
