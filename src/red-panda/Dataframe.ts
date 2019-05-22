@@ -2,12 +2,17 @@ import Column from './Column'
 
 export default class Dataframe {
     private columnsNames: Array<string> = []
-    private id: string = "id"
-    private data: any = {}
+    private id: string = ""
+    private columns: any = {}
+    private rows: any = {}
 
     constructor(obj?: DataframeParams) {
         // this.columns.push(this.id)
         if (obj) {
+            if (obj.id) {
+                // this.id = obj.id
+                // this.columns[0] = this.id
+            }
             if (obj.columnsNames && obj.data) {
                 if (obj.columnsNames.length !== obj.data.length) {
                     throw new Error(`Length of columns(${obj.columnsNames.length}) and data(${obj.data.length}) must be the same`)
@@ -16,21 +21,26 @@ export default class Dataframe {
                     const column = obj.columnsNames[index]
                     const serie = obj.data[index]
                     this.columnsNames.push(column)
-                    this.data[column] = new Column({ data: serie, id: column })
+                    this.columns[column] = new Column({ data: serie, id: column })
                 }
             } else {
                 if (obj.columnsNames) {
                     this.columnsNames = obj.columnsNames
                 }
                 if (obj.data) {
+                    var tempRows = {}
                     for (let index = 0; index < obj.data.length; index++) {
-                        this.data[`column${index}`] = new Column({ id: `column${index}`, data: obj.data[index] })
+                        let tempColumn = new Column({ id: `column${index}`, data: obj.data[index] })
+                        this.columns[`column${index}`] = tempColumn
+                        for(let data in tempColumn.getData()) {
+                            if(this.id === '') {
+                                // if(tempRows)
+                            }
+                        }
                     }
                 }
             }
-            if (obj.id) {
-                // this.id = obj.id
-                // this.columns[0] = this.id
+            if (Object.keys(this.columns).length > 0) {
             }
         }
     }
@@ -47,13 +57,13 @@ export default class Dataframe {
         if (typeof index === 'number') {
             if (index < this.columnsNames.length) {
                 let temp = this.columnsNames[index]
-                return this.data[temp]
+                return this.columns[temp]
             }
         }
         if (typeof index === 'string') {
             for (let i of this.columnsNames) {
                 if (i == index) {
-                    return this.data[i]
+                    return this.columns[i]
                 }
             }
         }
@@ -61,19 +71,19 @@ export default class Dataframe {
     }
 
     size(): Array<Number> {
-        return [this.columnsNames.length, Object.keys(this.data).length]
+        return [this.columnsNames.length, Object.keys(this.rows).length]
     }
 
     head(): any {
         let temp: any = {}
         for (let index of this.columnsNames) {
-            temp[index] = this.data[index].head()
+            temp[index] = this.columns[index].head()
         }
         return temp
     }
 
     toString(): string {
-        return JSON.stringify(this.data)
+        return JSON.stringify(this.columns)
     }
 }
 

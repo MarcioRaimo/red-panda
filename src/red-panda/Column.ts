@@ -27,6 +27,10 @@ export default class Column {
         }
     }
 
+    getData(): Array<any> {
+        return this.data
+    }
+
     mean(): Number {
         if (this.type === "number") {
             let sum = 0
