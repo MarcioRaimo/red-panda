@@ -1,83 +1,127 @@
 import Column from './Column'
+import Row from './Row';
 
 export default class Dataframe {
-    private columnsNames: Array<string> = []
+    private columnsIds: Array<string> = []
+    private rowsIds: Array<string> = []
     private id: string = ""
     private columns: any = {}
     private rows: any = {}
 
     constructor(obj?: DataframeParams) {
-        // this.columns.push(this.id)
         if (obj) {
+            let axis = obj.axis || 'column'
             if (obj.id) {
-                // this.id = obj.id
-                // this.columns[0] = this.id
+                this.id = obj.id
             }
-            if (obj.columnsNames && obj.data) {
-                if (obj.columnsNames.length !== obj.data.length) {
-                    throw new Error(`Length of columns(${obj.columnsNames.length}) and data(${obj.data.length}) must be the same`)
+            if (obj.columnsIds && obj.data) {
+                let tempRows: any = {}
+                if (obj.columnsIds.length !== obj.data.length && axis === 'column') {
+                    throw new Error(`Length of columns(${obj.columnsIds.length}) and data(${obj.data.length}) must be the same`)
                 }
-                for (let index = 0; index < obj.columnsNames.length; index++) {
-                    const column = obj.columnsNames[index]
-                    const serie = obj.data[index]
-                    this.columnsNames.push(column)
-                    this.columns[column] = new Column({ data: serie, id: column })
-                }
-            } else {
-                if (obj.columnsNames) {
-                    this.columnsNames = obj.columnsNames
-                }
-                if (obj.data) {
-                    var tempRows = {}
-                    for (let index = 0; index < obj.data.length; index++) {
-                        let tempColumn = new Column({ id: `column${index}`, data: obj.data[index] })
-                        this.columns[`column${index}`] = tempColumn
-                        for(let data in tempColumn.getData()) {
-                            if(this.id === '') {
-                                // if(tempRows)
+                if (axis === 'column') {
+                    for (let index = 0; index < obj.columnsIds.length; index++) {
+                        const column = obj.columnsIds[index]
+                        const serie = obj.data[index]
+                        this.columnsIds.push(column)
+                        this.columns[column] = new Column({ data: serie, id: column })
+                    }
+                    for (let index = 0; index < this.columnsIds.length; index++) {
+                        const column = this.columnsIds[index]
+                        const serie = this.columns[column].data
+                        for (let valueIndex = 0; valueIndex < serie.length; valueIndex++) {
+                            const cell = serie[valueIndex]
+                            if (this.id === '') {
+                                if (tempRows[`row${valueIndex}`] !== undefined) {
+                                    tempRows[`row${valueIndex}`][column] = cell
+                                } else {
+                                    tempRows[`row${valueIndex}`] = {}
+                                    tempRows[`row${valueIndex}`][column] = cell
+                                }
+                            } else {
+                                if(this.columnsIds.indexOf(this.id) === -1) {
+                                    throw new Error(`Column with name: ${this.id} is not present (${this.columnsIds})`)
+                                }
+                                let tempId = this.columns[this.id].data[valueIndex]
+                                if (tempRows[tempId] !== undefined) {
+                                    tempRows[tempId][column] = cell
+                                } else {
+                                    tempRows[tempId] = []
+                                    tempRows[tempId][column] = cell
+                                }
                             }
                         }
                     }
+                    this.rowsIds = Object.keys(tempRows)
+                    for (let index = 0; index < this.rowsIds.length; index++) {
+                        let rowId = this.rowsIds[index]
+                        this.rows[rowId] = new Row({ data: tempRows[rowId], id: rowId })
+                    }
                 }
-            }
-            if (Object.keys(this.columns).length > 0) {
             }
         }
     }
 
     getColumnsNames(): Array<string> {
-        return this.columnsNames
+        return this.columnsIds
     }
 
     getColumn(index: number): Column
-
-    getColumn(name: string): Column
-
+    getColumn(index: string): Column
     getColumn(index: any): Column {
         if (typeof index === 'number') {
-            if (index < this.columnsNames.length) {
-                let temp = this.columnsNames[index]
+            if (index < this.columnsIds.length) {
+                let temp = this.columnsIds[index]
                 return this.columns[temp]
             }
         }
         if (typeof index === 'string') {
-            for (let i of this.columnsNames) {
+            for (let i of this.columnsIds) {
                 if (i == index) {
                     return this.columns[i]
                 }
             }
         }
-        throw new Error(`Serie with name or index ${index} not exists in dataframe`)
+        throw new Error(`Column with id or index ${index} is not present in dataframe`)
+    }
+
+    getRowsIds(): Array<string> {
+        return this.rowsIds
+    }
+
+    getRow(index: number): Row
+    getRow(index: string): Row
+    getRow(index: any): Row {
+        if (typeof index === 'number') {
+            if (index < this.rowsIds.length) {
+                let temp = this.rowsIds[index]
+                return this.rows[temp]
+            }
+        }
+        if (typeof index === 'string') {
+            for (let i of this.rowsIds) {
+                if (i == index) {
+                    return this.rows[i]
+                }
+            }
+        }
+        throw new Error(`Row with id or index ${index} is not present in dataframe`)
     }
 
     size(): Array<Number> {
-        return [this.columnsNames.length, Object.keys(this.rows).length]
+        return [this.columnsIds.length, Object.keys(this.rows).length]
     }
 
-    head(): any {
-        let temp: any = {}
-        for (let index of this.columnsNames) {
-            temp[index] = this.columns[index].head()
+    head(): Array<Row> {
+        let temp: Array<Row> = []
+        if(this.rowsIds.length > 10) {
+            for(let index = 0; index < 10; index++) {
+                temp.push(this.rows[this.rowsIds[index]])
+            }
+        } else {
+            for(let index = 0; index < this.rowsIds.length; index++) {
+                temp.push(this.rows[this.rowsIds[index]])
+            }
         }
         return temp
     }
@@ -88,7 +132,8 @@ export default class Dataframe {
 }
 
 type DataframeParams = {
-    columnsNames?: Array<string>
+    columnsIds?: Array<string>
     id?: string
     data?: Array<Array<any>>
+    axis?: 'column' | 'row'
 }

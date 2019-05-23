@@ -8,6 +8,10 @@ export default class Row {
     if (!obj.data) {
       throw new Error(`Cannot create empty row`)
     }
+    if(!obj.id) {
+      throw new Error('Row id cannot be empty')
+    }
+    this.id = obj.id
     this.columnsNames = Object.keys(obj.data)
     for (let index of this.columnsNames) {
       this.data[index] = obj.data[index]

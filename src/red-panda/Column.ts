@@ -43,14 +43,6 @@ export default class Column {
         }
     }
 
-    head(): Array<any> {
-        let temp = []
-        for (let index = 0; index < 10; index++) {
-            temp.push(this.data[index])
-        }
-        return temp
-    }
-
     // add(serie: Column): Column {
     //     if(this.validateForBinaryOperation(serie)) {
     //         let temp = []
