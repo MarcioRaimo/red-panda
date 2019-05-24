@@ -5,8 +5,8 @@ export default class Dataframe {
     private columnsIds: Array<string> = []
     private rowsIds: Array<string> = []
     private id: string = ""
-    private columns: any = {}
-    private rows: any = {}
+    private columns: Map<string, Column> = new Map()
+    private rows: Map<string, Row> = new Map()
 
     constructor(obj?: DataframeParams) {
         if (obj) {
@@ -24,13 +24,13 @@ export default class Dataframe {
                         const column = obj.columnsIds[index]
                         const serie = obj.data[index]
                         this.columnsIds.push(column)
-                        this.columns[column] = new Column({ data: serie, id: column })
+                        this.columns.set(column, new Column({ data: serie, id: column }))
                     }
                     for (let index = 0; index < this.columnsIds.length; index++) {
                         const column = this.columnsIds[index]
-                        const serie = this.columns[column].data
-                        for (let valueIndex = 0; valueIndex < serie.length; valueIndex++) {
-                            const cell = serie[valueIndex]
+                        const serie = this.columns.get(column)
+                        for (let valueIndex = 0; valueIndex < serie.getData().length; valueIndex++) {
+                            const cell = serie.getData()[valueIndex]
                             if (this.id === '') {
                                 if (tempRows[`row${valueIndex}`] !== undefined) {
                                     tempRows[`row${valueIndex}`][column] = cell
@@ -42,7 +42,7 @@ export default class Dataframe {
                                 if(this.columnsIds.indexOf(this.id) === -1) {
                                     throw new Error(`Column with name: ${this.id} is not present (${this.columnsIds})`)
                                 }
-                                let tempId = this.columns[this.id].data[valueIndex]
+                                let tempId = this.columns.get(this.id).getData()[valueIndex]
                                 if (tempRows[tempId] !== undefined) {
                                     tempRows[tempId][column] = cell
                                 } else {
@@ -55,7 +55,7 @@ export default class Dataframe {
                     this.rowsIds = Object.keys(tempRows)
                     for (let index = 0; index < this.rowsIds.length; index++) {
                         let rowId = this.rowsIds[index]
-                        this.rows[rowId] = new Row({ data: tempRows[rowId], id: rowId })
+                        this.rows.set(rowId, new Row({ data: tempRows[rowId], id: rowId }))
                     }
                 }
             }
@@ -72,13 +72,13 @@ export default class Dataframe {
         if (typeof index === 'number') {
             if (index < this.columnsIds.length) {
                 let temp = this.columnsIds[index]
-                return this.columns[temp]
+                return this.columns.get(temp)
             }
         }
         if (typeof index === 'string') {
             for (let i of this.columnsIds) {
                 if (i == index) {
-                    return this.columns[i]
+                    return this.columns.get(i)
                 }
             }
         }
@@ -95,13 +95,13 @@ export default class Dataframe {
         if (typeof index === 'number') {
             if (index < this.rowsIds.length) {
                 let temp = this.rowsIds[index]
-                return this.rows[temp]
+                this.rows.get(temp)
             }
         }
         if (typeof index === 'string') {
             for (let i of this.rowsIds) {
                 if (i == index) {
-                    return this.rows[i]
+                    this.rows.get(i)
                 }
             }
         }
@@ -116,11 +116,11 @@ export default class Dataframe {
         let temp: Array<Row> = []
         if(this.rowsIds.length > 10) {
             for(let index = 0; index < 10; index++) {
-                temp.push(this.rows[this.rowsIds[index]])
+                temp.push(this.rows.get(this.rowsIds[index]))
             }
         } else {
             for(let index = 0; index < this.rowsIds.length; index++) {
-                temp.push(this.rows[this.rowsIds[index]])
+                temp.push(this.rows.get(this.rowsIds[index]))
             }
         }
         return temp
