@@ -32,30 +32,130 @@ export default class Column {
     }
 
     mean(): Number {
-        if (this.type === "number") {
+        if (this.validateForBinaryOperation(this)) {
             let sum = 0
             for (let index of this.data) {
                 sum += index
             }
             return sum / this.data.length
-        } else {
-            throw new Error(`The serie ${this.id} is not numeric`)
         }
     }
 
-    // add(serie: Column): Column {
-    //     if(this.validateForBinaryOperation(serie)) {
-    //         let temp = []
-    //         for (let index = 0; index < serie.data.length; index++) {
-    //             temp.push(serie.data[index] + this.data[index])
-    //         }
-    //         return new Column({ data: temp, id: 'result' })
-    //     }
-    // }
+    sum(): Number {
+        if (this.validateForBinaryOperation(this)) {
+            let sum = 0
+            for (let index of this.data) {
+                sum += index
+            }
+            return sum
+        }
+    }
 
-    // sub(serie: Column): Column {
+    add(serie: Column): Column {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] + serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
 
-    // }
+    sub(serie: Column) {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] - serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    mul(serie: Column) {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] * serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    div(serie: Column) {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] * serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    pow(serie: Column, pow: number) {
+        if (this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(Math.pow(this.data[index], pow))
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    lt(serie: Column) {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] < serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    lte(serie: Column) {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] <= serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    gt(serie: Column) {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] > serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    gte(serie: Column) {
+        if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
+            let temp = []
+            for (let index = 0; index < serie.data.length; index++) {
+                temp.push(this.data[index] > serie.data[index])
+            }
+            return new Column({ data: temp, id: 'result' })
+        }
+    }
+
+    nte(serie: Column) {
+        let temp = []
+        for (let index = 0; index < serie.data.length; index++) {
+            temp.push(this.data[index] !== serie.data[index])
+        }
+        return new Column({ data: temp, id: 'result' })
+    }
+
+    eq(serie: Column) {
+        let temp = []
+        for (let index = 0; index < serie.data.length; index++) {
+            temp.push(this.data[index] === serie.data[index])
+        }
+        return new Column({ data: temp, id: 'result' })
+    }
 
     private validateForBinaryOperation(serie: Column): Boolean {
         if (serie.type !== 'number') {
