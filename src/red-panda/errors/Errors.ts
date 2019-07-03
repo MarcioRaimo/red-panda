@@ -1,0 +1,1 @@
+export const COL01 = "Cannot instantiate an column without id"

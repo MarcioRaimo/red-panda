@@ -1,3 +1,6 @@
+// to-do implement axis row
+// to-do implement Columns data to Map
+
 import Column from './Column'
 import Row from './Row';
 
@@ -14,7 +17,10 @@ export default class Dataframe {
             if (obj.id) {
                 this.id = obj.id
             }
-            if (obj.columnsIds && obj.data) {
+            if (!obj.columnsIds && obj.columnsIds.length > 0) {
+                throw new Error('Columns ids is required and cannot be empty')
+            }
+            if (obj.data) {
                 let tempRows: any = {}
                 if (obj.columnsIds.length !== obj.data.length && axis === 'column') {
                     throw new Error(`Length of columns(${obj.columnsIds.length}) and data(${obj.data.length}) must be the same`)
@@ -39,7 +45,7 @@ export default class Dataframe {
                                     tempRows[`row${valueIndex}`][column] = cell
                                 }
                             } else {
-                                if(this.columnsIds.indexOf(this.id) === -1) {
+                                if (this.columnsIds.indexOf(this.id) === -1) {
                                     throw new Error(`Column with name: ${this.id} is not present (${this.columnsIds})`)
                                 }
                                 let tempId = this.columns.get(this.id).getData()[valueIndex]
@@ -56,6 +62,19 @@ export default class Dataframe {
                     for (let index = 0; index < this.rowsIds.length; index++) {
                         let rowId = this.rowsIds[index]
                         this.rows.set(rowId, new Row({ data: tempRows[rowId], id: rowId }))
+                    }
+                } else if (axis === 'row') {
+                    if (obj.columnsIds.length !== obj.data[0].length) {
+                        throw new Error(`Length of columns(${obj.columnsIds.length}) and data(${obj.data[0].length}) must be the same`)
+                    }
+                    this.columnsIds = obj.columnsIds
+                    let tempRows: any = {}
+                    for (let index = 0; index < obj.data.length; index++) {
+                        if(this.id === '') {
+                            if(tempRows[`row${index}`] === undefined) {
+                                tempRows[`row${index}`] = {}
+                            }
+                        }
                     }
                 }
             }
@@ -114,12 +133,12 @@ export default class Dataframe {
 
     head(): Array<Row> {
         let temp: Array<Row> = []
-        if(this.rowsIds.length > 10) {
-            for(let index = 0; index < 10; index++) {
+        if (this.rowsIds.length > 10) {
+            for (let index = 0; index < 10; index++) {
                 temp.push(this.rows.get(this.rowsIds[index]))
             }
         } else {
-            for(let index = 0; index < this.rowsIds.length; index++) {
+            for (let index = 0; index < this.rowsIds.length; index++) {
                 temp.push(this.rows.get(this.rowsIds[index]))
             }
         }

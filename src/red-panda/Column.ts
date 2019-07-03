@@ -1,3 +1,9 @@
+import { ColumnError } from "./errors/ColumnError";
+import { COL01 } from "./errors/Errors";
+
+// to-do rowsIds parameter
+// to-do change data into Map
+
 export default class Column {
     private data: Array<any> = []
     private id: string = ""
@@ -24,6 +30,8 @@ export default class Column {
                     this.data = obj.data
                 }
             }
+        } else {
+            throw new ColumnError(COL01)
         }
     }
 
@@ -169,6 +177,6 @@ export default class Column {
 }
 
 type ColumnParam = {
-    id?: string
+    id: string
     data?: Array<any>
 }

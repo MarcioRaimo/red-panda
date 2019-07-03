@@ -1,7 +1,7 @@
 export default class Row {
 
   private columnsNames: Array<string> = []
-  private data: any = {}
+  private data: Map<String, any> = new Map<String, any>()
   private id: string = ''
 
   constructor(obj: RowParams) {
@@ -14,7 +14,7 @@ export default class Row {
     this.id = obj.id
     this.columnsNames = Object.keys(obj.data)
     for (let index of this.columnsNames) {
-      this.data[index] = obj.data[index]
+      this.data.set(index, obj.data[index])
     }
   }
 
@@ -25,14 +25,14 @@ export default class Row {
   getValue(index: any): any {
 
     if (typeof index === 'number') {
-      if (this.data[this.columnsNames[index]] !== undefined) {
-        return this.data[this.columnsNames[index]]
+      if (this.data.get(this.columnsNames[index]) !== undefined) {
+        return this.data.get(this.columnsNames[index])
       } else {
         throw new Error(`The column ${this.columnsNames[index]} isnt in this row`)
       }
     }
-    if (this.data[this.columnsNames[index]] !== undefined) {
-      return this.data[index]
+    if (this.data.get(index) !== undefined) {
+      return this.data.get(index)
     } else {
       throw new Error(`The column ${this.columnsNames[index]} isnt in this row`)
     }
@@ -41,5 +41,7 @@ export default class Row {
 
 type RowParams = {
   id: string
-  data: any
+  data: {
+    [key: string]: any
+  }
 }
