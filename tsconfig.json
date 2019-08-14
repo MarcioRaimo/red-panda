@@ -4,6 +4,7 @@
     "module": "commonjs",
     "strict": true,
     "outDir": "dist",
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "downlevelIteration": true
   }
 }

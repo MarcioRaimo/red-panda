@@ -35,7 +35,7 @@ export default class Dataframe {
                     for (let index = 0; index < this.columnsIds.length; index++) {
                         const column = this.columnsIds[index]
                         const serie = this.columns.get(column)
-                        for (let valueIndex = 0; valueIndex < serie.getData().length; valueIndex++) {
+                        for (let valueIndex = 0; valueIndex < serie.getData().size; valueIndex++) {
                             const cell = serie.getData()[valueIndex]
                             if (this.id === '') {
                                 if (tempRows[`row${valueIndex}`] !== undefined) {

@@ -5,7 +5,7 @@ import { COL01 } from "./errors/Errors";
 // to-do change data into Map
 
 export default class Column {
-    private data: Array<any> = []
+    private data: Map<string, any> = new Map<string, any>()
     private id: string = ""
     private type: string = "string"
 
@@ -24,10 +24,14 @@ export default class Column {
                     }
                 }
                 if (control) {
-                    this.data = temp
+                    for (let index = 0; index < temp.length; index++) {
+                        this.data.set(`${index}`, temp[index])
+                    }
                     this.type = "number"
                 } else {
-                    this.data = obj.data
+                    for (let index = 0; index < temp.length; index++) {
+                        this.data.set(`${index}`, obj.data[index])
+                    }
                 }
             }
         } else {
@@ -35,7 +39,7 @@ export default class Column {
         }
     }
 
-    getData(): Array<any> {
+    getData(): Map<string, any> {
         return this.data
     }
 
@@ -43,9 +47,9 @@ export default class Column {
         if (this.validateForBinaryOperation(this)) {
             let sum = 0
             for (let index of this.data) {
-                sum += index
+                sum += index[1]
             }
-            return sum / this.data.length
+            return sum / this.data.size
         }
     }
 
@@ -53,7 +57,7 @@ export default class Column {
         if (this.validateForBinaryOperation(this)) {
             let sum = 0
             for (let index of this.data) {
-                sum += index
+                sum += index[1]
             }
             return sum
         }
@@ -62,8 +66,8 @@ export default class Column {
     add(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] + serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] + serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -72,8 +76,8 @@ export default class Column {
     sub(serie: Column) {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] - serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] - serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -82,8 +86,8 @@ export default class Column {
     mul(serie: Column) {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] * serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] * serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -92,8 +96,8 @@ export default class Column {
     div(serie: Column) {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] * serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] * serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -102,8 +106,8 @@ export default class Column {
     pow(serie: Column, pow: number) {
         if (this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(Math.pow(this.data[index], pow))
+            for (let index of this.data) {
+                temp.push(Math.pow(index[1], pow))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -112,8 +116,8 @@ export default class Column {
     lt(serie: Column) {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] < serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] < serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -122,8 +126,8 @@ export default class Column {
     lte(serie: Column) {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] <= serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] <= serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -132,8 +136,8 @@ export default class Column {
     gt(serie: Column) {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] > serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] > serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -142,8 +146,8 @@ export default class Column {
     gte(serie: Column) {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
-            for (let index = 0; index < serie.data.length; index++) {
-                temp.push(this.data[index] > serie.data[index])
+            for (let index of this.data) {
+                temp.push(index[1] > serie.data.get(index[0]))
             }
             return new Column({ data: temp, id: 'result' })
         }
@@ -151,16 +155,16 @@ export default class Column {
 
     nte(serie: Column) {
         let temp = []
-        for (let index = 0; index < serie.data.length; index++) {
-            temp.push(this.data[index] !== serie.data[index])
+        for (let index of this.data) {
+            temp.push(index[1] !== serie.data.get(index[0]))
         }
         return new Column({ data: temp, id: 'result' })
     }
 
     eq(serie: Column) {
         let temp = []
-        for (let index = 0; index < serie.data.length; index++) {
-            temp.push(this.data[index] === serie.data[index])
+        for (let index of this.data) {
+            temp.push(index[1] === serie.data.get(index[0]))
         }
         return new Column({ data: temp, id: 'result' })
     }
@@ -169,8 +173,8 @@ export default class Column {
         if (serie.type !== 'number') {
             throw new Error(`The type of the serie: ${serie.id} is not numeric`)
         }
-        if (serie.data.length !== this.data.length) {
-            throw new Error(`The length(${serie.data.length}) of the serie: ${serie.id} is differente from the length(${this.data.length}) current serie`)
+        if (serie.data.size !== this.data.size) {
+            throw new Error(`The length(${serie.data.size}) of the serie: ${serie.id} is differente from the length(${this.data.size}) current serie`)
         }
         return true
     }
