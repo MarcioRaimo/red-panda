@@ -3,8 +3,13 @@
         {
             "name": "index",
             "script": "dist/index.js",
-            "ignoreWatch": ["node_modules", "dist"],
-            "watch": true
+            "ignoreWatch": [
+                "node_modules"
+            ],
+            "watch": [
+                "dist"
+            ],
+            "autorestart": false
         }
     ]
 }

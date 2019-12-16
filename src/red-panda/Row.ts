@@ -19,11 +19,8 @@ export default class Row {
   }
 
   getValue(index: number): any
-
   getValue(index: string): any
-
   getValue(index: any): any {
-
     if (typeof index === 'number') {
       if (this.data.get(this.columnsNames[index]) !== undefined) {
         return this.data.get(this.columnsNames[index])
