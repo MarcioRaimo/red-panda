@@ -1,5 +1,6 @@
 import { ColumnError } from "./errors/ColumnError";
 import { COL01 } from "./errors/Errors";
+import { ColumnParams } from "../@types/ColumnParams";
 
 // to-do rowsIds parameter
 // to-do change data into Map
@@ -9,7 +10,7 @@ export default class Column {
     private id: string = ""
     private type: string = "string"
 
-    constructor(obj?: ColumnParam) {
+    constructor(obj?: ColumnParams) {
         if (obj) {
             this.id = obj.id || ""
             if (obj.data) {
@@ -39,11 +40,19 @@ export default class Column {
         }
     }
 
+    /**
+     * Return a map of row values
+     * @returns {Map<string, any>}
+     */
     getData(): Map<string, any> {
         return this.data
     }
 
-    mean(): Number {
+    /**
+     * Calculate mean of row value
+     * @returns {number}
+     */
+    mean(): number {
         if (this.validateForBinaryOperation(this)) {
             let sum = 0
             for (let index of this.data) {
@@ -53,7 +62,11 @@ export default class Column {
         }
     }
 
-    sum(): Number {
+    /**
+     * Sum of row values
+     * @returns {number}
+     */
+    sum(): number {
         if (this.validateForBinaryOperation(this)) {
             let sum = 0
             for (let index of this.data) {
@@ -63,6 +76,11 @@ export default class Column {
         }
     }
 
+    /**
+     * Sum this rows values to another
+     * @param {Column} serie
+     * @returns {Column} New column with the result
+     */
     add(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
@@ -73,7 +91,12 @@ export default class Column {
         }
     }
 
-    sub(serie: Column) {
+    /**
+     * Subtract this rows values to another
+     * @param {Column} serie
+     * @returns {Column} New column with the result
+     */
+    sub(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -83,7 +106,12 @@ export default class Column {
         }
     }
 
-    mul(serie: Column) {
+    /**
+     * Multiply this rows values to another
+     * @param {Column} serie
+     * @returns {Column} New column with the result
+     */
+    mul(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -93,7 +121,12 @@ export default class Column {
         }
     }
 
-    div(serie: Column) {
+    /**
+     * Divide this rows values to another
+     * @param {Column} serie
+     * @returns {Column} New column with the result
+     */
+    div(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -103,7 +136,12 @@ export default class Column {
         }
     }
 
-    pow(serie: Column, pow: number) {
+    /**
+     * Exponential power of this rows values to another
+     * @param {Column} serie
+     * @returns {Column} New column with the result
+     */
+    pow(serie: Column, pow: number): Column {
         if (this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -113,7 +151,12 @@ export default class Column {
         }
     }
 
-    lt(serie: Column) {
+    /**
+     * Compare less than of this row values with another
+     * @param {Column} serie
+     * @returns {Column} New column with the results value by value
+     */
+    lt(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -123,7 +166,12 @@ export default class Column {
         }
     }
 
-    lte(serie: Column) {
+    /**
+     * Compare less than or equal of this row values with another
+     * @param {Column} serie
+     * @returns {Column} New column with the results value by value
+     */
+    lte(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -133,7 +181,12 @@ export default class Column {
         }
     }
 
-    gt(serie: Column) {
+    /**
+     * Compare greater than of this row values with another
+     * @param {Column} serie
+     * @returns {Column} New column with the results value by value
+     */
+    gt(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -143,7 +196,12 @@ export default class Column {
         }
     }
 
-    gte(serie: Column) {
+    /**
+     * Compare greater than or equal of this row values with another
+     * @param {Column} serie
+     * @returns {Column} New column with the results value by value
+     */
+    gte(serie: Column): Column {
         if (this.validateForBinaryOperation(serie) && this.validateForBinaryOperation(this)) {
             let temp = []
             for (let index of this.data) {
@@ -153,7 +211,12 @@ export default class Column {
         }
     }
 
-    nte(serie: Column) {
+    /**
+     * Compare not equal of this row values with another
+     * @param {Column} serie
+     * @returns {Column} New column with the results value by value
+     */
+    nte(serie: Column): Column {
         let temp = []
         for (let index of this.data) {
             temp.push(index[1] !== serie.data.get(index[0]))
@@ -161,7 +224,12 @@ export default class Column {
         return new Column({ data: temp, id: 'result' })
     }
 
-    eq(serie: Column) {
+    /**
+     * Compare equal of this row values with another
+     * @param {Column} serie
+     * @returns {Column} New column with the results value by value
+     */
+    eq(serie: Column): Column {
         let temp = []
         for (let index of this.data) {
             temp.push(index[1] === serie.data.get(index[0]))
@@ -169,7 +237,12 @@ export default class Column {
         return new Column({ data: temp, id: 'result' })
     }
 
-    private validateForBinaryOperation(serie: Column): Boolean {
+    /**
+     * Validate the values for binary operations
+     * @param {Column} serie 
+     * @returns {boolean}
+     */
+    private validateForBinaryOperation(serie: Column): boolean {
         if (serie.type !== 'number') {
             throw new Error(`The type of the serie: ${serie.id} is not numeric`)
         }
@@ -178,9 +251,4 @@ export default class Column {
         }
         return true
     }
-}
-
-type ColumnParam = {
-    id: string
-    data?: Array<any>
 }
