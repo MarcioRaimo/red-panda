@@ -5,6 +5,7 @@
     "strict": true,
     "outDir": "dist",
     "strictNullChecks": false,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "rootDir": "src"
   }
 }

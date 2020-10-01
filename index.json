@@ -2,12 +2,12 @@
     "apps": [
         {
             "name": "index",
-            "script": "dist/index.js",
+            "script": "ts-node src/index.ts",
             "ignoreWatch": [
                 "node_modules"
             ],
             "watch": [
-                "dist"
+                "src"
             ],
             "autorestart": false
         }

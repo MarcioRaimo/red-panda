@@ -7,13 +7,11 @@
     "csvjson": "^5.1.0"
   },
   "scripts": {
-    "compile": "tsc --watch",
-    "start": "pm2 start index.json && pm2 logs",
-    "stop": "pm2 kill"
+    "start": "ts-node-dev --respawn --watch src/ src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^12.12.18",
-    "pm2": "^4.2.1",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.3"
   }
 }

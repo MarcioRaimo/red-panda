@@ -12,6 +12,7 @@ export default class Dataframe {
     private rows: Map<string, Row> = new Map()
 
     constructor(obj?: DataframeParams) {
+        console.log(obj)
         if (obj) {
             let axis = obj.axis || 'column'
             if (obj.id) {
@@ -233,6 +234,8 @@ export default class Dataframe {
         for (let i = 0; i < maxIndex; i++) {
             rows.push(this.getRow(i))
         }
-        
+        return new Dataframe({
+
+        })
     }
 }

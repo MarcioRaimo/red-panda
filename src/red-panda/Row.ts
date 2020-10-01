@@ -41,4 +41,7 @@ export default class Row {
             throw new Error(`The column ${this.columnsNames[index]} isnt in this row`)
         }
     }
+
+    toJson(): void {
+    }
 }
